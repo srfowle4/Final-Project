@@ -1,1 +1,73 @@
+beta = 0.3; 
+gamma = 0.1; 
+h_coarse = 2;  
+h_fine = 1;  
+T = 100;
+time_fine = 0:h_fine:T; 
+time_coarse = 0:h_coarse:T; 
+S0 = 990; 
+I0 = 10; 
+R0 = 0; 
+N = S0 + I0 + R0;  
 
+function [S, I, R] = solveSIR(beta, gamma, h, T, S0, I0, R0, N) 
+    time = 0:h:T; 
+    S = zeros(1, length(time)); 
+    I = zeros(1, length(time)); 
+    R = zeros(1, length(time)); 
+    S(1) = S0; I(1) = I0; 
+    R(1) = R0; 
+        for t = 1:length(time)-1  
+            dSdt = @(S, I) -beta * S * I / N; 
+            dIdt = @(S, I) beta * S * I / N - gamma * I; 
+            dRdt = @(I) gamma * I;  
+            
+            k1_S = h * dSdt(S(t), I(t)); 
+            k1_I = h * dIdt(S(t), I(t)); 
+            k1_R = h * dRdt(I(t)); 
+            k2_S = h * dSdt(S(t) + 0.5*k1_S, I(t) + 0.5*k1_I); 
+            k2_I = h * dIdt(S(t) + 0.5*k1_S, I(t) + 0.5*k1_I); 
+            k2_R = h * dRdt(I(t) + 0.5*k1_I); 
+            k3_S = h * dSdt(S(t) + 0.5*k2_S, I(t) + 0.5*k2_I); 
+            k3_I = h * dIdt(S(t) + 0.5*k2_S, I(t) + 0.5*k2_I); 
+            k3_R = h * dRdt(I(t) + 0.5*k2_I); 
+            k4_S = h * dSdt(S(t) + k3_S, I(t) + k3_I); 
+            k4_I = h * dIdt(S(t) + k3_S, I(t) + k3_I); 
+            k4_R = h * dRdt(I(t) + k3_I); 
+            S(t+1) = S(t) + (k1_S + 2*k2_S + 2*k3_S + k4_S) / 6; 
+            I(t+1) = I(t) + (k1_I + 2*k2_I + 2*k3_I + k4_I) / 6; 
+            R(t+1) = R(t) + (k1_R + 2*k2_R + 2*k3_R + k4_R) / 6; 
+        end 
+end 
+
+[S_fine, I_fine, R_fine] = solveSIR(beta, gamma, h_fine, T, S0, I0, R0, N); 
+[S_coarse, I_coarse, R_coarse] = solveSIR(beta, gamma, h_coarse, T, S0, I0, R0, N); 
+
+odd_days = 1:2:T; 
+S_interp_linear = interp1(time_coarse, S_coarse, odd_days, 'linear'); 
+S_interp_quadratic = interp1(time_coarse, S_coarse, odd_days, 'pchip'); 
+
+I_interp_linear = interp1(time_coarse, I_coarse, odd_days, 'linear'); 
+I_interp_quadratic = interp1(time_coarse, I_coarse, odd_days, 'pchip'); 
+
+R_interp_linear = interp1(time_coarse, R_coarse, odd_days, 'linear'); 
+R_interp_quadratic = interp1(time_coarse, R_coarse, odd_days, 'pchip'); 
+
+L2_error = @(V_model, V_interp, time) sqrt(sum((V_model - V_interp).^2) / length(V_interp)); 
+
+S_error_linear = L2_error(interp1(time_fine, S_fine, odd_days), S_interp_linear, odd_days); 
+S_error_quadratic = L2_error(interp1(time_fine, S_fine, odd_days), S_interp_quadratic, odd_days); 
+
+I_error_linear = L2_error(interp1(time_fine, I_fine, odd_days), I_interp_linear, odd_days); 
+I_error_quadratic = L2_error(interp1(time_fine, I_fine, odd_days), I_interp_quadratic, odd_days); 
+
+R_error_linear = L2_error(interp1(time_fine, R_fine, odd_days), R_interp_linear, odd_days); 
+R_error_quadratic = L2_error(interp1(time_fine, R_fine, odd_days), R_interp_quadratic, odd_days); 
+
+
+errors_table = table(... 
+    ["S(t)"; "I(t)"; "R(t)"], ... 
+    [S_error_linear; I_error_linear; R_error_linear], ... 
+    [S_error_quadratic; I_error_quadratic; R_error_quadratic], ... 
+    'VariableNames', {'Variable', 'Linear Interpolation Error', 'Quadratic Interpolation Error'}); 
+disp(errors_table);
