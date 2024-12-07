@@ -10,7 +10,7 @@ I0 = 10;
 R0 = 0; 
 N = S0 + I0 + R0; 
 
-time = 0:h:T; 
+time = 0:h:T;
 
 beta_t_1 = @(t) beta_0 * (1 + A * sin(omega_1 * t)); 
 beta_t_2 = @(t) beta_0 * (1 + A * sin(omega_2 * t));  
@@ -43,7 +43,7 @@ N = length(time);
 f = (0:N/2-1) / (N * h); 
 
 I_fft_1 = abs(fft(I1)); 
-I_fft_1_half = I_fft_1(1:floor(N/2)); 
+I_fft_1_half = I_fft_1(1:N/2); 
 
 figure; 
 plot(f, I_fft_1_half, 'r', 'LineWidth', 1.5); 
@@ -53,7 +53,7 @@ ylabel('|FFT(I(t))|');
 grid on;  
 
 I_fft_2 = abs(fft(I2)); 
-I_fft_2_half = I_fft_2(1:floor(N/2)); 
+I_fft_2_half = I_fft_2(1:N/2); 
 
 figure; 
 plot(f, I_fft_2_half, 'r', 'LineWidth', 1.5); 
