@@ -6,7 +6,7 @@ S0 = 990;
 I0_true = 10;
 R0 = 0;
 N = S0 + I0_true + R0;
-[S, I_true, R] = solveSIR(beta, gamma, h, T, S0, I0_true, R0, N);.
+[S, I_true, R] = solveSIR(beta, gamma, h, T, S0, I0_true, R0, N);
 time = 0:h:T;
 log_I_true = log(I_true);
 A = [ones(length(time), 1), time'];
@@ -76,3 +76,6 @@ I(t+1) = I(t) + (k1_I + 2*k2_I + 2*k3_I + k4_I) / 6;
 R(t+1) = R(t) + (k1_R + 2*k2_R + 2*k3_R + k4_R) / 6;
 end
 end
+
+
+BLAAHHH BLAHDcNDNA UDANADUAC AKDHBC AKD XJDNXSONXLCNS CJCNSoNXLNSL MSXNCSJUNCALNX CBOUDSB CSDCB BCABCDB BCSU
