@@ -15,6 +15,28 @@ beta_t_2 = @(t) beta_0 * (1 + A * sin(omega_2 * t));
 [S1, I1, R1] = solveSIR_time_varying(beta_t_1, gamma, h, T, S0, I0, R0, N);
 [S2, I2, R2] = solveSIR_time_varying(beta_t_2, gamma, h, T, S0, I0, R0, N);
 
+
+
+dfghj
+dfghj
+dfghj
+dfghj
+dfghj
+dfghj
+dfghj
+dfghj
+dfghj
+dfghj
+dfghj
+dfghj
+
+dfghj
+dfghj
+dfghj
+
+
+dfghj
+
 figure;
 plot(time, S1, 'b', 'LineWidth', 1.5);
 hold on;
