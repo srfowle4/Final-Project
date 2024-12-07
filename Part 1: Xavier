@@ -1,1 +1,54 @@
+h = 1;
+T = 100;
+time = 0:h:T;
+S0 = 990;
+I0 = 10;
+R0 = 0;
+N = S0 + I0 + R0;
+parameters = {
+'Seasonal Influenza', 0.3, 0.1;
+'COVID-19', 1, 0.1;
+'Measles', 2, 0.2 };
+for p = 1:size(parameters, 1)
+scenario = parameters{p, 1};
+beta = parameters{p, 2};
+gamma = parameters{p, 3};
+S = zeros(1, length(time));
+I = zeros(1, length(time));
+R = zeros(1, length(time));
+S(1) = S0;
+I(1) = I0;
+R(1) = R0;
+for t = 1:length(time)-1
+dSdt = @(S, I) -beta * S * I / N;
+dIdt = @(S, I) beta * S * I / N - gamma * I;
+dRdt = @(I) gamma * I;
+k1_S = h * dSdt(S(t), I(t));
+k1_I = h * dIdt(S(t), I(t));
+k1_R = h * dRdt(I(t));
+k2_S = h * dSdt(S(t) + 0.5*k1_S, I(t) + 0.5*k1_I);
+k2_I = h * dIdt(S(t) + 0.5*k1_S, I(t) + 0.5*k1_I);
+k2_R = h * dRdt(I(t) + 0.5*k1_I);
+k3_S = h * dSdt(S(t) + 0.5*k2_S, I(t) + 0.5*k2_I);
+k3_I = h * dIdt(S(t) + 0.5*k2_S, I(t) + 0.5*k2_I);
+k3_R = h * dRdt(I(t) + 0.5*k2_I);
+k4_S = h * dSdt(S(t) + k3_S, I(t) + k3_I);
+k4_I = h * dIdt(S(t) + k3_S, I(t) + k3_I);
+k4_R = h * dRdt(I(t) + k3_I);
+S(t+1) = S(t) + (k1_S + 2*k2_S + 2*k3_S + k4_S) / 6;
+I(t+1) = I(t) + (k1_I + 2*k2_I + 2*k3_I + k4_I) / 6;
+R(t+1) = R(t) + (k1_R + 2*k2_R + 2*k3_R + k4_R) / 6;
+
+end
+figure;
+plot(time, S, 'b', 'LineWidth', 1.5);
+hold on;
+plot(time, I, 'r', 'LineWidth', 1.5);
+plot(time, R, 'g', 'LineWidth', 1.5);
+xlabel('Time (days)');
+ylabel('Population');
+title(['SIR Model - ' scenario]);
+legend('Susceptible', 'Infected', 'Recovered');
+grid on;
+end
 
