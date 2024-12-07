@@ -43,7 +43,7 @@ N = length(time);
 f = (0:N/2-1) / (N * h); 
 
 I_fft_1 = abs(fft(I1)); 
-I_fft_1_half = I_fft_1(1:N/2); 
+I_fft_1_half = I_fft_1(1:floor(N/2)); 
 
 figure; 
 plot(f, I_fft_1_half, 'r', 'LineWidth', 1.5); 
@@ -53,7 +53,7 @@ ylabel('|FFT(I(t))|');
 grid on;  
 
 I_fft_2 = abs(fft(I2)); 
-I_fft_2_half = I_fft_2(1:N/2); 
+I_fft_2_half = I_fft_2(1:floor(N/2)); 
 
 figure; 
 plot(f, I_fft_2_half, 'r', 'LineWidth', 1.5); 
