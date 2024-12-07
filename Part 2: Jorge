@@ -71,3 +71,7 @@ errors_table = table(...
     [S_error_quadratic; I_error_quadratic; R_error_quadratic], ... 
     'VariableNames', {'Variable', 'Linear Interpolation Error', 'Quadratic Interpolation Error'}); 
 disp(errors_table);
+
+hello
+cruel
+
