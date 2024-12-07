@@ -1,10 +1,10 @@
 # Final-Project
-Part 1:
-    Xavier Trejo
-Part 2:
-    Jorge Espinoza
-Part 3:
-    Sean Mammen
+Part 1: 
+    Xavier Trejo   
+Part 2: 
+    Jorge Espinoza   
+Part 3: 
+    Sean Mammen   
 Part 4:
     Sonya Fowler
 
